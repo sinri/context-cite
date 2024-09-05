@@ -7,9 +7,10 @@
     [<a href="https://huggingface.co/spaces/contextcite/context-cite">🤗 demo</a>]
     [<a href="https://gradientscience.org/contextcite/">blog post #1</a>]
     [<a href="https://gradientscience.org/contextcite-applications/">blog post #2</a>]
-    [<a href="https://twitter.com/aleks_madry/status/1787564287986389277">tweet</a>]
-    [paper coming soon!]
-    <!-- [<a href="#citation">Citation</a>] -->
+<!--     [<a href="https://twitter.com/aleks_madry/status/1787564287986389277">tweet</a>] -->
+    [<a href="https://arxiv.org/abs/2409.00729">paper</a>]
+<!--     [paper coming soon!] -->
+    [<a href="#citation">bib</a>]
     <br>
     Maintainers: <a href="https://twitter.com/bcohenwang">Ben Cohen-Wang</a>, <a href="https://twitter.com/harshays_">Harshay Shah</a>, and <a href="https://twitter.com/kris_georgiev1">Kristian Georgiev</a>
 </p>
@@ -88,12 +89,13 @@ Try out `context_cite` using our example notebooks (you can open them in Google 
 
 ## Citation
 ```bib
-@misc{cohenwang2024contextcite,
-  author = {Benjamin Cohen-Wang, Harshay Shah, Kristian Georgiev, Aleksander Madry},
-  title = {ContextCite: Attributing Model Generation to Context},
-  year = {2024},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/MadryLab/context-cite/tree/main}},
+@misc{cohenwang2024contextciteattributingmodelgeneration,
+      title={ContextCite: Attributing Model Generation to Context}, 
+      author={Benjamin Cohen-Wang and Harshay Shah and Kristian Georgiev and Aleksander Madry},
+      year={2024},
+      eprint={2409.00729},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2409.00729}, 
 }
 ```
