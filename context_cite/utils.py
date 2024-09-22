@@ -10,7 +10,7 @@ from datasets import Dataset
 from torch.utils.data import DataLoader
 from transformers import DataCollatorForSeq2Seq
 
-nltk.download("punkt")
+nltk.download("punkt_tab")
 
 
 def split_text(text: str, split_by: str) -> Tuple[List[str], List[str], List[str]]:
