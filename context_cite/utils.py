@@ -108,6 +108,8 @@ def _make_loader(dataset, tokenizer, batch_size):
 
 
 def _get_response_logit_probs(dataset, model, tokenizer, response_length, batch_size):
+    if batch_size > 1:
+        assert tokenizer.padding_side == "left", "Tokenizer must use left padding"
     loader = _make_loader(dataset, tokenizer, batch_size)
     logit_probs = ch.zeros((len(dataset), response_length), device=model.device)
 

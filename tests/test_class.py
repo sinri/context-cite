@@ -17,6 +17,7 @@ def get_model(model_name: str) -> tuple[Any, Any]:
     # trust_remote_code=True is necessary for the Phi-3 model
     model = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True)
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+    tokenizer.padding_side = "left"
     return model, tokenizer
 
 
@@ -223,6 +224,34 @@ def test_attribute_all(model_name: str) -> None:
     model.cuda()
     context, query = get_context_and_query()
     cc = ContextCiter(model, tokenizer, context, query, num_ablations=16)
+    scores = cc.get_attributions()
+    assert isinstance(scores, np.ndarray)
+
+
+@pytest.mark.parametrize("model_name", MODEL_NAMES)
+def test_attribute_batch(model_name: str) -> None:
+    model, tokenizer = get_model(model_name)
+    model.eval()
+    model.cuda()
+    context, query = get_context_and_query()
+    cc = ContextCiter(model, tokenizer, context, query, num_ablations=16, batch_size=2)
+    scores = cc.get_attributions()
+    assert isinstance(scores, np.ndarray)
+
+
+@pytest.mark.parametrize("model_name", MODEL_NAMES)
+def test_attribute_batch_from_pretrained(model_name: str) -> None:
+    context, query = get_context_and_query()
+    cc = ContextCiter.from_pretrained(
+        model_name,
+        context,
+        query,
+        source_type="word",
+        model_kwargs={"trust_remote_code": True},
+        tokenizer_kwargs={"trust_remote_code": True},
+        num_ablations=16,
+        batch_size=2,
+    )
     scores = cc.get_attributions()
     assert isinstance(scores, np.ndarray)
 
