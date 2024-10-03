@@ -89,13 +89,10 @@ Try out `context_cite` using our example notebooks (you can open them in Google 
 
 ## Citation
 ```bib
-@misc{cohenwang2024contextciteattributingmodelgeneration,
-      title={ContextCite: Attributing Model Generation to Context}, 
-      author={Benjamin Cohen-Wang and Harshay Shah and Kristian Georgiev and Aleksander Madry},
-      year={2024},
-      eprint={2409.00729},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2409.00729}, 
+@article{cohenwang2024contextcite,
+    title={ContextCite: Attributing Model Generation to Context},
+    author={Cohen-Wang, Benjamin and Shah, Harshay and Georgiev, Kristian and Madry, Aleksander},
+    journal={arXiv preprint arXiv:2409.00729},
+    year={2024}
 }
 ```
