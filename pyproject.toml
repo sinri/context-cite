@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "context-cite"
-version = "0.0.3"
+version = "0.0.4"
 authors = [
   { name="MadryLab", email="contextcite@mit.edu" },
 ]
@@ -16,7 +16,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = ["numpy", "torch", "transformers", "datasets", "pandas", "nltk", "spacy", "scikit-learn", "tqdm"]
+dependencies = ["numpy", "torch", "transformers", "datasets", "pandas", "nltk >= 3.8.2", "spacy", "scikit-learn", "tqdm"]
 
 [project.optional-dependencies]
 optional = ["langchain", "beautifulsoup4", "faiss-cpu", "tiktoken", "scipy"]
