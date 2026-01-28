@@ -1,7 +1,9 @@
-from typing import List
+from typing import List, Optional
 
 from context_cite import ContextCiter
 from pandas.core.frame import DataFrame
+
+from context_cite.context_partitioner import BaseContextPartitioner
 
 
 class CitationAnalyzedDatum:
@@ -22,11 +24,16 @@ class CitationAnalyzedDatum:
     def set_score(self, score: float):
         self.__score = score
 
+    def get_source_head(self):
+        x = self.__source.find("\n")
+        return self.__source[0:x]
+
 
 class CitationAnalyzedData:
-    def __init__(self, datum_list: List[CitationAnalyzedDatum],response:str):
+    def __init__(self, datum_list: List[CitationAnalyzedDatum], response: str):
         self.__datum_list = datum_list
         self.__response = response
+
     def normalize(self):
         """
         将 self.__datum_list 的 item 的 score 归一化处理（即最高分的项的分数定义为1.00）。
@@ -53,23 +60,25 @@ class CitationAnalyzedData:
 
 
 class CitationAnalyzer:
-    def __init__(self, model_source:str):
+    def __init__(self, model_source: str):
         self.__model_source = model_source
 
     def execute(
-        self, 
-        context: str, 
-        query: str, 
-        top_k: int = 5, 
-        verbose: bool = False,
-        max_new_tokens:int=1024,
-        do_sample:bool=False,
+            self,
+            context: str,
+            query: str,
+            top_k: int = 5,
+            verbose: bool = False,
+            max_new_tokens: int = 1024,
+            do_sample: bool = False,
+            partitioner: Optional[BaseContextPartitioner] = None,
     ) -> CitationAnalyzedData:
         cc = ContextCiter.from_pretrained(
-            self.__model_source, 
-            context=context, 
+            self.__model_source,
+            context=context,
             query=query,
             generate_kwargs={"max_new_tokens": max_new_tokens, "do_sample": do_sample},
+            partitioner=partitioner,
         )
         data = cc.get_attributions(as_dataframe=True, top_k=top_k, verbose=verbose).data
 
