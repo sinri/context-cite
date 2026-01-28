@@ -1,0 +1,11 @@
+numpy
+torch
+transformers
+datasets
+pandas==2.3.3
+nltk >= 3.8.2
+spacy
+scikit-learn
+tqdm
+setuptools==80.9.0
+wheel==0.46.1
