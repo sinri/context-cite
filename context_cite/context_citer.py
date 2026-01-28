@@ -17,8 +17,18 @@ from .utils import (
 )
 
 
-DEFAULT_GENERATE_KWARGS = {"max_new_tokens": 512, "do_sample": False}
-DEFAULT_PROMPT_TEMPLATE = "Context: {context}\n\nQuery: {query}"
+DEFAULT_GENERATE_KWARGS = {"max_new_tokens": 1024, "do_sample": False}
+DEFAULT_PROMPT_TEMPLATE = """
+# CONTEXT
+
+```
+{context}
+```
+
+# QUERY
+
+{query}
+"""
 
 
 class ContextCiter:
