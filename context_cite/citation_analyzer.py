@@ -1,3 +1,4 @@
+import json
 from typing import List, Optional
 
 from context_cite import ContextCiter
@@ -27,6 +28,9 @@ class CitationAnalyzedDatum:
     def get_source_head(self):
         x = self.__source.find("\n")
         return self.__source[0:x]
+
+    def to_dict(self):
+        return {"index": self.__index, "score": self.__score, "source_head":self.get_source_head()}
 
 
 class CitationAnalyzedData:
