@@ -148,7 +148,7 @@ class AnalyzeReport:
         return result
 
 if __name__ == "__main__":
-    case_code='b'
+    case_code='d'
 
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     case_dir = os.path.join(base_dir, "data", "internal", "t", case_code)

@@ -16,7 +16,7 @@ class Exp:
     def __execute(self,context:str,query:str):
         partitioner = SeparatorContextPartitioner(
             context=context,
-            separator=re.compile(r"^[ -]+$"),
+            separator=re.compile(r"^----$"),
             match_whole_line=True,  # Match standalone lines with ====
             strip_sources=True  # Strip whitespace from each source
         )
@@ -95,4 +95,4 @@ class Exp:
 if __name__ == '__main__':
     model_source = "E:\\sinri\\DeepSeek-R1-Distill-Qwen-1.5B"
     exp=Exp(model_source)
-    exp.perform("c",repeat=5)
+    exp.perform("d",repeat=5)
