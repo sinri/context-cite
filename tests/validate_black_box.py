@@ -22,8 +22,6 @@ if __name__ == '__main__':
     # model_source="E:\\sinri\\DeepSeek-R1-Distill-Qwen-1.5B"
     model_source="E:\\sinri\\HuggingFace\\Qwen3-1.7B"
 
-
-
     query = "What is the capital of Bioland?"
     target_text = "Findois is the capital and largest city of Bioland."
 
@@ -34,11 +32,12 @@ if __name__ == '__main__':
     # output_2 = "Findois is the capital of Bioland."  # 有 target_text 时的回答
 
     analyzer = BlackBoxCitationAnalyzer(model_source=model_source)
-    result = analyzer.analyze(
+    result = analyzer.analyze_repeatedly(
         query=query,
         target_text=target_text,
         output_1=output_1,
         output_2=output_2,
+        repeat=10,
     )
 
     influence_1 = result.get_influence_on_output_1()
