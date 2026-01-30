@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 from transformers import AutoModelForCausalLM,AutoTokenizer
 from transformers import pipeline
 import os
@@ -6,7 +8,7 @@ class LLM:
     def __init__(self, model_source):
         self.__pipe = pipeline("text-generation", model=model_source)
 
-    def generate(self, messages, remove_think=True, repetition_penalty=1.1):
+    def generate(self, messages:List[Dict[str,str]], remove_think=True, repetition_penalty=1.1):
         response = self.__pipe(messages, max_new_tokens=10240, repetition_penalty=repetition_penalty)
         res=response[0]["generated_text"][1]["content"]
         if remove_think:
