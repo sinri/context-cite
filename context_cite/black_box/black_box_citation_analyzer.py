@@ -136,25 +136,3 @@ class BlackBoxCitationAnalyzer:
             influence_on_output_1=influence_on_output_1,
             influence_on_output_2=influence_on_output_2,
         )
-
-    def analyze_repeatedly(
-        self,
-        query: str,
-        target_text: str,
-        output_1: str,
-        output_2: str,
-        repeat:int=10,
-    ) -> BlackBoxCitationResult:
-        results = []
-        for i in range(repeat):
-            result = self.analyze(query, target_text, output_1, output_2)
-            results.append(result)
-        sum_1=0
-        sum_2=0
-        for result in results:
-            sum_1+=result.get_influence_on_output_1()
-            sum_2+=result.get_influence_on_output_2()
-        return BlackBoxCitationResult(
-            influence_on_output_1=sum_1/repeat,
-            influence_on_output_2=sum_2/repeat,
-        )

@@ -9,35 +9,23 @@ class LLM:
     def __init__(self, model_source):
         self.__pipe = pipeline("text-generation", model=model_source)
 
-    def generate(self, messages:List[Dict[str,str]], remove_think=True):
+    def generate(self, messages: List[Dict[str, str]], remove_think=True):
         response = self.__pipe(messages, max_new_tokens=10240, repetition_penalty=1.5)
-        res=response[0]["generated_text"][1]["content"]
+        res = response[0]["generated_text"][1]["content"]
         if remove_think:
             if "</think>" in res:
                 res = res.split("</think>")[-1]
             res = res.lstrip()
         return res
 
-if __name__ == '__main__':
-    # model_source="E:\\sinri\\DeepSeek-R1-Distill-Qwen-1.5B"
-    model_source="E:\\sinri\\HuggingFace\\Qwen3-1.7B"
 
-    query = "What is the capital of Bioland?"
-    target_text = "Findois is the capital and largest city of Bioland."
-
-    llm=LLM(model_source)
-    output_1=llm.generate(messages=[{"role":"user","content":query}],) # repetition_penalty=1.5
-    # output_1 = "I'm not sure."  # 无 target_text 时的典型短回答
-    output_2 = llm.generate(messages=[{"role": "user", "content": target_text+"\n\n"+query}], ) # repetition_penalty=1.5
-    # output_2 = "Findois is the capital of Bioland."  # 有 target_text 时的回答
-
+def single(llm, query, target_text, output_1, output_2):
     analyzer = BlackBoxCitationAnalyzer(model_source=model_source)
-    result = analyzer.analyze_repeatedly(
+    result = analyzer.analyze(
         query=query,
         target_text=target_text,
         output_1=output_1,
         output_2=output_2,
-        repeat=5,
     )
 
     influence_1 = result.get_influence_on_output_1()
@@ -54,3 +42,39 @@ if __name__ == '__main__':
     print('output 2')
     print(output_2)
     print(influence_1, influence_2)
+
+
+def repeat_exp(llm, query, target_text, repeat=5):
+    sum1 = 0
+    sum2 = 0
+    for round in range(repeat):
+        output_1 = llm.generate(messages=[{"role": "user", "content": query}], )
+        output_2 = llm.generate(messages=[{"role": "user", "content": target_text + "\n\n" + query}], )
+
+        analyzer = BlackBoxCitationAnalyzer(model_source=model_source)
+        result = analyzer.analyze(
+            query=query,
+            target_text=target_text,
+            output_1=output_1,
+            output_2=output_2,
+        )
+        print(
+            f'Round [{round + 1}/{repeat}]: {result.get_influence_on_output_1()} vs {result.get_influence_on_output_2()}')
+        sum1 += result.get_influence_on_output_1()
+        sum2 += result.get_influence_on_output_2()
+
+    print(f"Average: {1.0 * sum1 / repeat} vs {1.0 * sum2 / repeat}")
+
+
+if __name__ == '__main__':
+    # model_source="E:\\sinri\\DeepSeek-R1-Distill-Qwen-1.5B"
+    model_source = "E:\\sinri\\HuggingFace\\Qwen3-1.7B"
+
+    query = "What is the capital of Bioland?"
+    target_text = "Findois is the capital and largest city of Bioland."
+
+    llm = LLM(model_source)
+
+    # single(llm,query,target_text,output_1="I'm not sure.",output_2="Findois is the capital of Bioland.")
+
+    repeat_exp(llm, query, target_text, repeat=5)
