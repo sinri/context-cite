@@ -149,6 +149,8 @@ class BlackBoxCitationAnalyzer:
         for i in range(repeat):
             result = self.analyze(query, target_text, output_1, output_2)
             results.append(result)
+        sum_1=0
+        sum_2=0
         for result in results:
             sum_1+=result.get_influence_on_output_1()
             sum_2+=result.get_influence_on_output_2()

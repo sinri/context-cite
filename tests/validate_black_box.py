@@ -37,7 +37,7 @@ if __name__ == '__main__':
         target_text=target_text,
         output_1=output_1,
         output_2=output_2,
-        repeat=10,
+        repeat=5,
     )
 
     influence_1 = result.get_influence_on_output_1()
