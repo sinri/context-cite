@@ -67,6 +67,47 @@ class BlackBoxCitationResult:
     def get_influence_on_output_2(self) -> float:
         return self.__influence_on_output_2
 
+    def get_conclusion(self) -> str:
+        """
+        已知 query 和 target_text，在同一个模型服务上下文场景下，
+        通过 INPUT=query 生成了 output_1 ；
+        通过 INPUT=query+target_text 生成了 output_2。
+        经本项目消融实验，得出 target_text 
+        对 output_1 的影响程度为 {self.__influence_on_output_1}，
+        对 output_2 的影响程度为 {self.__influence_on_output_2}。
+        本方法基于上述已知信息，生成文本形式的结论，要求结论中包含：
+        1. target_text 对 query 的相关程度；
+        2. 该模型服务的上下文中包含 target_text 的概率；
+        """
+        i1 = self.__influence_on_output_1
+        i2 = self.__influence_on_output_2
+        # 基于两归因分数的相对关系抽取结论，避免绝对阈值
+        eps = 1e-9
+        if i2 > eps:
+            ratio = i1 / i2  # i1 与 i2 接近则 ratio 接近 1，说明仅 query 时上下文也可能含 target_text
+        else:
+            ratio = 0.0  # i2≈0 时视为 target_text 对 output_2 几乎无贡献，比例无意义
+        # 相关程度：i2 相对 i1 越大，说明 target_text 在纳入上下文时对回答贡献越大，与 query 越相关
+        if i2 > i1 * (1.0 + 0.2):
+            relevance = "较高"
+        elif i2 < i1 * (1.0 - 0.2) or (i1 <= eps and i2 <= eps):
+            relevance = "较低"
+        else:
+            relevance = "中等"
+        # 上下文中包含 target_text 的概率：i1 与 i2 越接近，仅给定 query 时服务上下文含 target_text 的可能性越大
+        if ratio >= 0.6:
+            prob_desc = "较大"
+        elif ratio <= 0.3:
+            prob_desc = "较小"
+        else:
+            prob_desc = "中等"
+        return (
+            f"经消融实验，target_text 对 output_1 的归因分数为 {i1:.4f}，"
+            f"对 output_2 的归因分数为 {i2:.4f}（二者比值 i1/i2={ratio:.2f}）。"
+            f"据此推断：target_text 与 query 的相关程度为{relevance}；"
+            f"该模型服务在仅给定 query 时其上下文中包含 target_text 的概率{prob_desc}。"
+        )
+
 
 class BlackBoxCitationAnalyzer:
     def __init__(self, model_source: str) -> None:
