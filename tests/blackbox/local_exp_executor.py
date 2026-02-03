@@ -45,15 +45,7 @@ class LocalExpExecutor:
         return self.__target_text
 
     def __generate_prompt(self, query: str, target_text: str = ''):
-        return f"""
-        # 可能有用的参考信息：
-        
-        {target_text}
-        
-        # 需要回应的问题：
-        
-        {query}
-        """
+        return f"# 可能有用的参考信息：\n\n{target_text}\n\n# 需要回应的问题：\n\n{query}"
 
     def execute_single_round(self):
         query = self.read_query()
