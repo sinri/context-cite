@@ -1,17 +1,21 @@
+import csv
 from typing import List, Dict
 
-from transformers import pipeline
+from transformers import pipeline, GenerationConfig
 
-from context_cite.black_box import BlackBoxCitationAnalyzer
-
+from context_cite.black_box import BlackBoxCitationAnalyzer, BlackBoxCitationResult
 
 
 class LLM:
     def __init__(self, model_source):
         self.__pipe = pipeline("text-generation", model=model_source)
+        self.__config = GenerationConfig(
+            max_new_tokens=1024,
+            repetition_penalty=1.5,
+        )
 
     def generate(self, messages: List[Dict[str, str]], remove_think=True):
-        response = self.__pipe(messages, max_new_tokens=1024, repetition_penalty=1.5)
+        response = self.__pipe(messages, generation_config=self.__config,)
         res = response[0]["generated_text"][1]["content"]
         if remove_think:
             if "</think>" in res:
@@ -22,6 +26,33 @@ class LLM:
 # model_source="E:\\sinri\\DeepSeek-R1-Distill-Qwen-1.5B"
 model_source = "E:\\sinri\\HuggingFace\\Qwen3-1.7B"
 llm = LLM(model_source)
+
+class ReportCsvHelper:
+    def __init__(self, target_csv_file_path:str,query:str,target_text:str):
+        self.__target_csv_file_path = target_csv_file_path
+        self.__query = query
+        self.__target_text = target_text
+        self.__records=[]
+
+    def add_exp_round_record(self,round:int,output_1:str,output_2:str,influence_1:str,influence_2:str):
+        self.__records.append({
+            'round':round,
+            'output_1':output_1,
+            'output_2':output_2,
+            'influence_1':influence_1,
+            'influence_2':influence_2,
+        })
+
+    def write(self):
+        with open(self.__target_csv_file_path, 'w',encoding='gbk') as csvfile:
+            csvwriter = csv.writer(csvfile, delimiter=',')
+            csvwriter.writerow(['target_text:',self.__target_text])
+            csvwriter.writerow(['query:', self.__query])
+            csvwriter.writerow(['round','output_1','output_2','influence_1','influence_2'])
+            for record in self.__records:
+                csvwriter.writerow([record['round'],record['output_1'],record['output_2'],record['influence_1'],record['influence_2']])
+
+
 
 def single(llm, query, target_text, output_1, output_2):
     analyzer = BlackBoxCitationAnalyzer(model_source=model_source)
@@ -48,12 +79,16 @@ def single(llm, query, target_text, output_1, output_2):
     print(influence_1, influence_2)
 
 
-def repeat_exp(llm, query, target_text, repeat=5):
+def repeat_exp(llm:LLM, query, target_text, repeat=5,report_file_path:str=None):
     sum1 = 0
     sum2 = 0
     for round in range(repeat):
-        output_1 = llm.generate(messages=[{"role": "user", "content": query}], )
-        output_2 = llm.generate(messages=[{"role": "user", "content": target_text + "\n\n" + query}], )
+        print(f'Round [{round + 1}/{repeat}] start...')
+        output_1 = llm.generate(messages=[{"role": "user", "content": "Query: \n"+query}], )
+        output_2 = llm.generate(messages=[{"role": "user", "content": "Reference maybe useful: \n" + target_text + "\n\nQuery: \n" + query}], )
+
+        print(f"output 1: {output_1}")
+        print(f"output 2: {output_2}")
 
         analyzer = BlackBoxCitationAnalyzer(model_source=model_source)
         result = analyzer.analyze(
@@ -67,7 +102,10 @@ def repeat_exp(llm, query, target_text, repeat=5):
         sum1 += result.get_influence_on_output_1()
         sum2 += result.get_influence_on_output_2()
 
-    print(f"Average: {1.0 * sum1 / repeat} vs {1.0 * sum2 / repeat}")
+    fin_result = BlackBoxCitationResult(influence_on_output_1=sum1 / repeat, influence_on_output_2=sum2 / repeat)
+
+    print(f"Average: {fin_result.get_influence_on_output_1()} vs {fin_result.get_influence_on_output_2()}")
+    print(fin_result.get_conclusion())
 
 def test_1(llm):
     query = "What is the capital of Bioland?"
@@ -143,6 +181,9 @@ def test_3(llm):
     single(llm, query_1, target_text, output_1=output_1, output_2=output_2)
 
 def test_4(llm):
+    """
+    本实验的目的是验证 query 与 target_text 低相关度的情况下，归因分数分布的情况。
+    """
     query = "What is the capital of Russia?"
     target_text = "Findois is the capital and largest city of Bioland."
 
