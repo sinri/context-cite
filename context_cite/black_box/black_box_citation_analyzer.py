@@ -88,7 +88,7 @@ class BlackBoxCitationAnalyzer:
         self.__model = None
         self.__tokenizer = None
 
-    def _get_model_and_tokenizer(self):
+    def get_model_and_tokenizer(self):
         if self.__model is None or self.__tokenizer is None:
             self.__model = AutoModelForCausalLM.from_pretrained(self.__model_source)
             self.__model.to("cuda")
@@ -105,7 +105,7 @@ class BlackBoxCitationAnalyzer:
         output_1: str,
         output_2: str,
     ) -> BlackBoxCitationResult:
-        model, tokenizer = self._get_model_and_tokenizer()
+        model, tokenizer = self.get_model_and_tokenizer()
         partitioner = _SingleBlockPartitioner(context=target_text)
         solver = LassoRegression()
         num_ablations = 64
