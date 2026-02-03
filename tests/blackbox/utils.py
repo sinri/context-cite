@@ -6,7 +6,7 @@ from context_cite.black_box import BlackBoxCitationAnalyzer
 
 
 class LLM:
-    def __init__(self, analyzer: BlackBoxCitationAnalyzer):
+    def __init__(self, analyzer: BlackBoxCitationAnalyzer,generation_config:GenerationConfig):
         # self.__tokenizer = AutoTokenizer.from_pretrained(model_source)
         # self.__model = AutoModelForCausalLM.from_pretrained(
         #     model_source,
@@ -16,10 +16,7 @@ class LLM:
         self.__model, self.__tokenizer = analyzer.get_model_and_tokenizer()
 
         # self.__pipe = pipeline("text-generation", model=model_source)
-        self.__config = GenerationConfig(
-            max_new_tokens=2048,
-            repetition_penalty=1.5,
-        )
+        self.__config = generation_config
 
     def generate(self, prompt: str, enable_thinking=False, remove_think=True):
         messages = [

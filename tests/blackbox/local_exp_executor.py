@@ -2,6 +2,8 @@ import os
 import time
 from datetime import datetime
 
+from transformers import GenerationConfig
+
 from context_cite.black_box import BlackBoxCitationAnalyzer
 from tests.blackbox.utils import LLM, ReportCsvHelper
 
@@ -21,9 +23,9 @@ def get_current_time_str():
 
 
 class LocalExpExecutor:
-    def __init__(self, analyzer: BlackBoxCitationAnalyzer, exp_dir: str):
+    def __init__(self, analyzer: BlackBoxCitationAnalyzer,generation_config:GenerationConfig, exp_dir: str):
         self.__analyzer = analyzer
-        self.__llm = LLM(analyzer)
+        self.__llm = LLM(analyzer, generation_config=generation_config)
         self.__exp_dir = exp_dir
         self.__query = None
         self.__target_text = None
@@ -44,8 +46,8 @@ class LocalExpExecutor:
                 return f.read()
         return self.__target_text
 
-    def __generate_prompt(self, query: str, target_text: str = ''):
-        return f"# 可能有用的参考信息：\n\n{target_text}\n\n# 需要回应的问题：\n\n{query}"
+    def __generate_prompt(self, query: str, target_text: str = None):
+        return f"# 额外的参考信息：\n\n{target_text}\n\n# 用户的问题：\n\n{query}"
 
     def execute_single_round(self):
         query = self.read_query()
