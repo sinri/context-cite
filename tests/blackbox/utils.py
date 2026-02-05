@@ -76,11 +76,12 @@ class ReportCsvHelper:
             'output_2': output_2,
             'influence_1': influence_1,
             'influence_2': influence_2,
+            'k1':influence_2/(influence_2-influence_1),
         })
 
     def save(self):
         with open(self.__target_csv_file_path, 'w',newline="", encoding="gbk",errors="replace") as csvfile:
-            fieldnames = ['input_1', 'input_2', 'output_1', 'output_2', 'influence_1', 'influence_2']
+            fieldnames = ['input_1', 'input_2', 'output_1', 'output_2', 'influence_1', 'influence_2','k1']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
             for record in self.__records:

@@ -25,7 +25,7 @@ generation_config = GenerationConfig(
     min_p=0,
 )
 
-exp_dir = "E:\\sinri\\context-cite\\data\\blackbox\\exp2"
+exp_dir = "E:\\sinri\\context-cite\\data\\blackbox\\exp3b"
 
 
 def perform():

@@ -1,0 +1,13 @@
+Java的`Optional`类（`java.util.Optional`）是Java 8引入的，一个可选值容器，
+它优雅地封装了可能为null或非null的值，旨在减少显式的null检查，从而避免恼人的`NullPointerException`，并以函数式编程风格更清晰地表达代码中的可空性。
+它提供了一系列方法来安全地操作可能不存在的值，如`isPresent()`检查、`orElse()`提供默认值、`map()`、`flatMap()`转换，以及`ifPresent()`执行操作。
+核心概念
+
+* 值的容器：Optional可以包含一个类型为T的实际值，也可以是空的（代表值不存在）。
+* 替代null：它提供了一种比直接使用null更具意图和安全性的方式来表示值缺失。
+
+主要创建方法
+
+* Optional.empty()：创建一个空的Optional对象。
+* Optional.of(T value)：创建一个包含非空值的Optional，如果传入null会抛出NullPointerException。
+* Optional.ofNullable(T value)：创建一个可包含null值的Optional，传入null则返回空Optional。
